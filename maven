@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+
+    environment {
+        MAVEN_HOME = '/usr/local/maven' // Make sure Maven is installed
+    }
+
+    tools {
+        maven 'Maven 3.6.3' // Make sure Maven is installed in Jenkins and configured in Global Tool Configuration
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the repository from source control
+                git 'https://github.com/your-repo/my-maven-project.git' // Change to your actual repository URL
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    // Run Maven build command
+                    sh "'${MAVEN_HOME}/bin/mvn' clean install"
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    // Run tests with Maven
+                    sh "'${MAVEN_HOME}/bin/mvn' test"
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    // Optional: Deploy your app, you can add a step like deploy to a server or upload to a repository
+                    echo 'Deploying the app...'
+                    // sh "'${MAVEN_HOME}/bin/mvn' deploy"  // Uncomment if you want to deploy
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build and tests were successful!'
+        }
+        failure {
+            echo 'Build or tests failed.'
+        }
+    }
+}
